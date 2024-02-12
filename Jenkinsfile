@@ -17,16 +17,17 @@ pipeline {
 
     }
 
-    stages {
-        stage ('build mat')
-        steps{
-            sh 'mvn -s settings.xml -DskipTest install'
-        }
-        post {
-            success {
-                echo "Now Archiving"
-                archiveArtifacts artifacts: '**/*.war'
+      stages {
+        stage('Build'){
+            steps {
+                sh 'mvn -s settings.xml -DskipTests install'
+            }
+            post {
+                success {
+                    echo "Now Archiving."
+                    archiveArtifacts artifacts: '**/*.war'
+                }
             }
         }
-    }
+
 }
