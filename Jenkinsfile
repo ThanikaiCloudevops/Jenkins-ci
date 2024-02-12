@@ -15,13 +15,13 @@ pipeline {
         NEXUSPORT = '8081'
         NEXUS_GRP_REPO = 'Projects-Central'
         NEXUS_LOGIN = 'nexuslogin'
-        SETTINGS_XML_PATH = "${HOME}/.m2/settings.xml"
+        // SETTINGS_XML_PATH = "${HOME}/.m2/settings.xml"
     }
 
-    stages {
-        stage('Build') {
+        stages {
+        stage('Build'){
             steps {
-                sh "mvn -s ${SETTINGS_XML_PATH} -DskipTests install"
+                sh 'mvn -s settings.xml -DskipTests install'
             }
             post {
                 success {
@@ -31,15 +31,16 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Test'){
             steps {
-                sh "mvn -s ${SETTINGS_XML_PATH} test"
+                sh 'mvn -s settings.xml test'
             }
+
         }
 
-        stage('Checkstyle Analysis') {
+        stage('Checkstyle Analysis'){
             steps {
-                sh "mvn -s ${SETTINGS_XML_PATH} checkstyle:checkstyle"
+                sh 'mvn -s settings.xml checkstyle:checkstyle'
             }
         }
 
@@ -71,22 +72,22 @@ pipeline {
             }
         }
 
-        stage("UploadArtifact") {
-            steps {
+        stage("UploadArtifact"){
+            steps{
                 nexusArtifactUploader(
-                    nexusVersion: 'nexus3',
-                    protocol: 'http',
-                    nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
-                    groupId: 'QA',
-                    version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-                    repository: "${RELEASE_REPO}",
-                    credentialsId: "${NEXUS_LOGIN}",
-                    artifacts: [
-                        [artifactId: 'vproapp',
-                         classifier: '',
-                         file: 'target/vprofile-v2.war',
-                         type: 'war']
-                    ]
+                  nexusVersion: 'nexus3',
+                  protocol: 'http',
+                  nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
+                  groupId: 'QA',
+                  version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                  repository: "${RELEASE_REPO}",
+                  credentialsId: "${NEXUS_LOGIN}",
+                  artifacts: [
+                    [artifactId: 'vproapp',
+                     classifier: '',
+                     file: 'target/vprofile-v2.war',
+                     type: 'war']
+                  ]
                 )
             }
         }
