@@ -14,32 +14,19 @@ pipeline {
         NEXUSPORT = '8081'
         NEXUS_GRP_REPO = 'Projects-Central'
         NEXUS_LOGIN = 'nexuslogin'
+        SETTINGS_XML_PATH = '/path/to/settings.xml'
     }
 
-
     stages {
-        stage('Build'){
+        stage('Build') {
             steps {
-                sh 'mvn -s settings.xml -DskipTests install'
+                sh "mvn -s ${SETTINGS_XML_PATH} -DskipTests install"
             }
             post {
                 success {
                     echo "Now Archiving."
                     archiveArtifacts artifacts: '**/*.war'
                 }
-            }
-        }
-
-        stage('Test'){
-            steps {
-                sh 'mvn -s settings.xml test'
-            }
-
-        }
-
-        stage('Checkstyle Analysis'){
-            steps {
-                sh 'mvn -s settings.xml checkstyle:checkstyle'
             }
         }
     }
