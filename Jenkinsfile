@@ -5,15 +5,15 @@ pipeline {
         jdk "OracleJDK8"
     }
     environment{
-        SNAP_REPO 
-        NEXUS_USER
-        NEXUS_PASS
-        RELEASE_REPO
-        CENTRAL_REPO
-        NEXUSIP
-        NEXUSPORT
-        NEXUS_GRP_REPO
-        NEXUS_LOGIN
+        SNAP_REPO = 'Projects-Snapshot'
+        NEXUS_USER = 'admin'
+        NEXUS_PASS = 'admin'
+        RELEASE_REPO = 'Projects-Release' 
+        CENTRAL_REPO = 'Projects-Dep'
+        NEXUSIP = '172.31.95.110'
+        NEXUSPORT = '8081'
+        NEXUS_GRP_REPO = 'Projects-Central'
+        NEXUS_LOGIN = 'nexuslogin'
 
     }
 
