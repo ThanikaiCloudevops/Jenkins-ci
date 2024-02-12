@@ -2,31 +2,38 @@ pipeline {
     agent any
     tools {
         maven "MAVEN3"
-        jdk "openjdk-8"
+        jdk "OracleJDK8"
     }
+    
     environment {
-        SNAP_REPO = 'Projects-Snapshot'
+        SNAP_REPO = 'vprofile-snapshot'
         NEXUS_USER = 'admin'
-        NEXUS_PASS = 'admin'
-        RELEASE_REPO = 'Projects-Release' 
-        CENTRAL_REPO = 'Projects-Dep'
-        NEXUSIP = '172.31.95.110'
+        NEXUS_PASS = 'admin123'
+        RELEASE_REPO = 'vprofile-release'
+        CENTRAL_REPO = 'vpro-maven-central'
+        NEXUSIP = '172.31.5.4'
         NEXUSPORT = '8081'
-        NEXUS_GRP_REPO = 'Projects-Central'
+        NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
-        SETTINGS_XML_PATH = '/path/to/settings.xml'
+        SETTINGS_XML_PATH = "${HOME}/.m2/settings.xml"
     }
 
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean install -DskipTests'
+                sh "mvn -s ${SETTINGS_XML_PATH} -DskipTests install"
             }
             post {
                 success {
                     echo "Now Archiving."
                     archiveArtifacts artifacts: '**/*.war'
                 }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh "mvn -s ${SETTINGS_XML_PATH} test"
             }
         }
     }
