@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools{
         maven "MAVEN3"
-        jdk "OracleJDK8"
+        jdk "openjdk-8"
     }
     environment{
         SNAP_REPO = 'Projects-Snapshot'
