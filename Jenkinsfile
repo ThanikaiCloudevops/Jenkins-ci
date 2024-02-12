@@ -6,14 +6,14 @@ pipeline {
     }
     
      environment {
-        SNAP_REPO = 'Projects-Snapshot'
+        SNAP_REPO = 'Vpro-snapshot'
         NEXUS_USER = 'admin'
         NEXUS_PASS = 'admin'
-        RELEASE_REPO = 'Projects-Release' 
-        CENTRAL_REPO = 'Projects-Dep'
+        RELEASE_REPO = 'Vpro-release' 
+        CENTRAL_REPO = 'Vpro-central'
         NEXUSIP = '172.31.95.110'
         NEXUSPORT = '8081'
-        NEXUS_GRP_REPO = 'Projects-Central'
+        NEXUS_GRP_REPO = 'Vpro-Grp'
         NEXUS_LOGIN = 'nexuslogin'
         // SETTINGS_XML_PATH = "${HOME}/.m2/settings.xml"
     }
