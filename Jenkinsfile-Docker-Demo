@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    environment {
+        GITHUB_REPO = 'https://github.com/ThanikaiCloudevops/Chat-application.git'
+        SCANNER_HOME = tool 'sonarqube'
+        DOCKER_CREDENTIALS_ID = 'dockerhub'
+        DOCKER_IMAGE_NAME = 'thanikai1/pub-image'
+    }
+
+    tools {
+        nodejs 'nodejs'
+        jdk     'jdk17'
+    }
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '*/master']],
+                    userRemoteConfigs: [[url: "${env.GITHUB_REPO}"]]
+                ])
+            }
+        }
+        
+        stage('Check Version') {
+            steps {
+                script {
+                    sh 'node --version'
+                    sh 'docker --version'
+                    sh "${SCANNER_HOME}/bin/sonar-scanner --version"
+                }
+            }
+        }
+        
+        stage('SonarQube Code Check') {
+            steps {
+                script {
+                    sh '''
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.host.url=http://13.233.251.150:9000/ \
+                        -Dsonar.login=squ_a1923c55a3f25162b28e6af5a3ab78199da4fe15 \
+                        -Dsonar.projectKey=React-app \
+                        -Dsonar.java.binaries=. \
+                        -Dsonar.projectName=React-app
+                    '''
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -f client/Dockerfile -t react-docker .'
+                    sh 'docker images'
+                }
+            }
+        }
+        
+        stage('Tag and Push Docker Image') {
+            steps {
+                script {
+                    // Tag the Docker image
+                    sh 'docker tag react-docker thanikai1/pub-image:latest'
+                    
+                    // Push the Docker image to Docker Hub
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                        docker.image(DOCKER_IMAGE_NAME).push('latest')
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
